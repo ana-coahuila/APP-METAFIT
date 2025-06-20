@@ -142,7 +142,7 @@ const Dashboard: React.FC = () => {
       <View style={styles.progressCard}>
         <View style={styles.progressHeader}>
           <View>
-            <Text style={styles.progressTitle}>Tu progreso</Text>
+            <Text style={styles.progressTitle}>Tu progreso se muestra aqui</Text>
             <Text style={styles.progressSubtitle}>
               {pesoRecords.length > 1 ? getWeightDifference() : 'Comienza tu viaje'}
             </Text>
