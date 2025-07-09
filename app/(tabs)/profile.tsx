@@ -1,9 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import {View,Text,TextInput,TouchableOpacity,StyleSheet,ScrollView,Alert,ActivityIndicator,} from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  ScrollView,
+  Alert,
+  ActivityIndicator,
+} from 'react-native';
 import axios from 'axios';
 import { User as IconUser, Settings, LogOut } from 'lucide-react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
+import styles from '../styles/stylesPer'; 
+import { LinearGradient } from 'expo-linear-gradient';
 
 interface User {
   fullName: string;
@@ -15,6 +25,8 @@ interface User {
   bmi?: number;
   bmiCategory?: string;
 }
+
+
 
 const Profile: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -73,8 +85,7 @@ const Profile: React.FC = () => {
         return;
       }
 
-
-      await axios.put('http://192.168.1.95:5000/api/auth/user', data, {
+      await axios.put('http://192.168.1.13:5000/api/auth/user', data, {
         headers: {
           'x-auth-token': token,
         },
@@ -101,13 +112,13 @@ const Profile: React.FC = () => {
 
   const handleSubmit = async () => {
     const newErrors: Record<string, string> = {};
-    
+
     if (!fullName.trim()) newErrors.fullName = 'El nombre es requerido';
-    if (!age || isNaN(parseInt(age)) || parseInt(age) < 18 || parseInt(age) > 30) 
+    if (!age || isNaN(parseInt(age)) || parseInt(age) < 18 || parseInt(age) > 30)
       newErrors.age = 'Edad inválida (18-30 años)';
-    if (!weight || isNaN(parseFloat(weight)) || parseFloat(weight) < 30 || parseFloat(weight) > 300) 
+    if (!weight || isNaN(parseFloat(weight)) || parseFloat(weight) < 30 || parseFloat(weight) > 300)
       newErrors.weight = 'Peso inválido (30-300 kg)';
-    if (!height || isNaN(parseInt(height)) || parseInt(height) < 100 || parseInt(height) > 250) 
+    if (!height || isNaN(parseInt(height)) || parseInt(height) < 100 || parseInt(height) > 250)
       newErrors.height = 'Altura inválida (100-250 cm)';
     if (!targetWeight || isNaN(parseFloat(targetWeight)) || parseFloat(targetWeight) < 30 || parseFloat(targetWeight) > 300)
       newErrors.targetWeight = 'Objetivo inválido (30-300 kg)';
@@ -140,15 +151,29 @@ const Profile: React.FC = () => {
 
   if (isLoading && !user) {
     return (
+
+      <LinearGradient
+      colors={['#00C9FF', '#92FE9D']} // Colores del degradado (azul-verde claro)
+      style={styles.container}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+    
+    >
       <View style={styles.centered}>
         <ActivityIndicator size="large" color="#1D4ED8" />
         <Text>Cargando perfil...</Text>
-      </View>
+      </View> </LinearGradient>
     );
   }
 
   if (!user) {
     return (
+<LinearGradient
+      colors={['#00C9FF', '#92FE9D']} // Colores del degradado (azul-verde claro)
+      style={styles.container}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }} >
+
       <View style={styles.centered}>
         <Text>No se pudo cargar la información del usuario</Text>
         <TouchableOpacity 
@@ -157,7 +182,7 @@ const Profile: React.FC = () => {
         >
           <Text style={styles.retryText}>Reintentar</Text>
         </TouchableOpacity>
-      </View>
+      </View></LinearGradient>
     );
   }
 
@@ -179,6 +204,11 @@ const Profile: React.FC = () => {
     : 'N/A';
 
   return (
+    <LinearGradient
+      colors={['#00C9FF', '#92FE9D']} // Colores del degradado (azul-verde claro)
+      style={styles.container}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }} >
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Tu Perfil</Text>
@@ -264,10 +294,11 @@ const Profile: React.FC = () => {
           <Text style={styles.logoutText}>Cerrar sesión</Text>
         </TouchableOpacity>
       </View>
-    </ScrollView>
+    </ScrollView></LinearGradient>
   );
 };
 
+// Función reutilizable para inputs
 const renderInput = (
   label: string,
   value: string,
@@ -282,12 +313,12 @@ const renderInput = (
       onChangeText={setValue} 
       style={[styles.input, error ? styles.inputError : null]} 
       keyboardType={keyboardType}
-      editable={!error}
     />
     {error && <Text style={styles.errorText}>{error}</Text>}
   </View>
 );
 
+// Función reutilizable para mostrar información
 const renderInfo = (label: string, value: string) => (
   <View style={styles.infoItem}>
     <Text style={styles.infoLabel}>{label}</Text>
@@ -295,203 +326,4 @@ const renderInfo = (label: string, value: string) => (
   </View>
 );
 
-const styles = StyleSheet.create({
-  container: { 
-    padding: 16,
-    paddingBottom: 32,
-    paddingTop: 40
-  },
-  centered: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  title: { 
-    fontSize: 24, 
-    fontWeight: 'bold', 
-    color: '#1F2937' 
-  },
-  iconContainer: { 
-    backgroundColor: '#EFF6FF', 
-    padding: 8, 
-    borderRadius: 20,
-  },
-  card: {
-    backgroundColor: '#FFFFFF',
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  profileRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  avatar: {
-    backgroundColor: '#DBEAFE',
-    borderRadius: 32,
-    width: 64,
-    height: 64,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 16,
-  },
-  avatarText: { 
-    fontSize: 24, 
-    fontWeight: 'bold', 
-    color: '#1E40AF' 
-  },
-  profileInfo: {
-    flex: 1,
-  },
-  profileName: { 
-    fontSize: 18, 
-    fontWeight: '600',
-    color: '#1F2937',
-  },
-  profileEmail: { 
-    color: '#6B7280',
-    fontSize: 14,
-  },
-  editButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 8,
-    borderColor: '#D1D5DB',
-    borderWidth: 1,
-    borderRadius: 8,
-    backgroundColor: '#F9FAFB',
-  },
-  editText: { 
-    marginLeft: 6,
-    color: '#4B5563',
-    fontSize: 14,
-  },
-  inputContainer: {
-    marginBottom: 16,
-  },
-  inputLabel: { 
-    color: '#374151', 
-    marginBottom: 8,
-    fontWeight: '500',
-    fontSize: 14,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-    borderRadius: 8,
-    padding: 12,
-    backgroundColor: '#FFFFFF',
-    fontSize: 16,
-  },
-  inputError: {
-    borderColor: '#FCA5A5',
-    backgroundColor: '#FEF2F2',
-  },
-  errorText: { 
-    color: '#DC2626', 
-    fontSize: 12,
-    marginTop: 4,
-  },
-  form: { 
-    marginTop: 8,
-  },
-  buttonRow: { 
-    flexDirection: 'row', 
-    justifyContent: 'space-between', 
-    marginTop: 16,
-  },
-  cancelButton: {
-    padding: 12,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#D1D5DB',
-    backgroundColor: '#FFFFFF',
-    flex: 1,
-    marginRight: 8,
-    alignItems: 'center',
-  },
-  cancelText: { 
-    color: '#374151',
-    fontWeight: '500',
-  },
-  saveButton: {
-    padding: 12,
-    borderRadius: 8,
-    backgroundColor: '#1D4ED8',
-    flex: 1,
-    marginLeft: 8,
-    alignItems: 'center',
-  },
-  saveText: { 
-    color: '#FFFFFF', 
-    fontWeight: '500',
-  },
-  disabledButton: {
-    opacity: 0.6,
-  },
-  infoGrid: { 
-    marginTop: 8,
-  },
-  infoItem: {
-    marginBottom: 12,
-  },
-  infoLabel: { 
-    color: '#6B7280', 
-    fontSize: 14,
-  },
-  infoValue: { 
-    fontWeight: '500',
-    fontSize: 16,
-    color: '#1F2937',
-    marginTop: 4,
-  },
-  cardTitle: { 
-    fontSize: 16, 
-    fontWeight: '600', 
-    marginBottom: 12,
-    color: '#1F2937',
-  },
-  logoutButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: '#FECACA',
-    padding: 12,
-    borderRadius: 8,
-    backgroundColor: '#FEF2F2',
-  },
-  logoutText: { 
-    color: '#DC2626', 
-    marginLeft: 8,
-    fontWeight: '500',
-  },
-  retryButton: {
-    marginTop: 16,
-    padding: 12,
-    borderRadius: 8,
-    backgroundColor: '#1D4ED8',
-  },
-  retryText: {
-    color: '#FFFFFF',
-    fontWeight: '500',
-  },
-});
-
-
 export default Profile;
-
-

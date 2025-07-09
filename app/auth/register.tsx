@@ -5,6 +5,8 @@ import Input from '../components/Input';
 import Button from '../components/Button';
 import { Activity } from 'lucide-react-native';
 import axios from 'axios';
+import { LinearGradient } from 'expo-linear-gradient';
+import styles from '../styles/stylesLog'; // Estilos importados
 
 const Register: React.FC = () => {
   const [step, setStep] = useState(1);
@@ -52,7 +54,7 @@ const Register: React.FC = () => {
     };
 
     try {
-      const response = await axios.post('http://192.168.1.95:5000/api/auth/register', data);
+      await axios.post('http://192.168.1.95:5000/api/auth/register', data);
       router.push('/(tabs)/dashboard');
     } catch (err: any) {
       setError(err.response?.data?.message || 'Error al registrar. Por favor intente de nuevo.');
@@ -61,22 +63,29 @@ const Register: React.FC = () => {
     }
   };
 
-  return (
-    <View style={{ flex: 1, backgroundColor: '#EFF6FF', justifyContent: 'center' }}>
-      <View style={{ backgroundColor: 'white', borderRadius: 12, margin: 16, padding: 24, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 3.84, elevation: 5 }}>
-        <View style={{ alignItems: 'center', marginBottom: 24 }}>
-          <View style={{ backgroundColor: '#3B82F6', padding: 12, borderRadius: 999 }}>
+  return(
+      <LinearGradient
+      colors={['#A0EACF', '#6BCBDF']} // Colores del degradado (azul-verde claro)
+      style={styles.container}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+    > 
+    
+    <View style={styles.card}>
+      <View>
+        <View style={styles.iconContainer}>
+          <View style={styles.iconBackground}>
             <Activity size={40} color="#1f2937" />
           </View>
         </View>
 
-        <Text style={{ fontSize: 24, fontWeight: 'bold', textAlign: 'center', marginBottom: 24, color: '#1F2937' }}>
+        <Text style={styles.title}>
           {step === 1 ? 'Crear una cuenta' : 'Información adicional'}
         </Text>
 
         {error && (
-          <View style={{ backgroundColor: '#FEE2E2', padding: 12, borderRadius: 6, marginBottom: 16, borderWidth: 1, borderColor: '#FCA5A5' }}>
-            <Text style={{ color: '#DC2626', textAlign: 'center' }}>{error}</Text>
+          <View style={styles.errorContainer}>
+            <Text style={styles.errorText}>{error}</Text>
           </View>
         )}
 
@@ -98,7 +107,7 @@ const Register: React.FC = () => {
           )}
         </ScrollView>
 
-        <View style={{ marginTop: 24 }}>
+        <View style={styles.form}>
           {step === 1 ? (
             <Button onPress={handleNextStep} variant="primary" fullWidth>
               Siguiente
@@ -111,23 +120,24 @@ const Register: React.FC = () => {
         </View>
 
         {step === 2 && (
-          <Pressable onPress={() => setStep(1)} style={{ marginTop: 16 }}>
-            <Text style={{ color: '#3B82F6', textAlign: 'center' }}>Volver</Text>
+          <Pressable onPress={() => setStep(1)} style={styles.buttonContainer}>
+            <Text style={styles.errorText}>Volver</Text>
           </Pressable>
         )}
 
-        <View style={{ marginTop: 24, alignItems: 'center' }}>
-          <Text style={{ color: '#4B5563' }}>
+        <View style={styles.footer}>
+          <Text style={styles.footerText}>
             ¿Ya tienes una cuenta?{' '}
             <Link href="/auth/login" asChild>
               <Pressable>
-                <Text style={{ color: '#1E40AF', fontWeight: '500' }}>Iniciar Sesión</Text>
+                <Text style={styles.linkText}>Iniciar Sesión</Text>
               </Pressable>
             </Link>
           </Text>
         </View>
       </View>
     </View>
+    </LinearGradient>
   );
 };
 

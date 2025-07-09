@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   primary: {
-    backgroundColor: '#3b82f6',
+    backgroundColor: '#A0DFF7',
   },
   secondary: {
     backgroundColor: '#e2e8f0',

@@ -10,8 +10,9 @@ import {
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import styles from '../styles/stylesP';
+import components from '../components/Card';
 
-type weightRecord = {
+type WeightRecord = {
   date: string;
   weight: number;
 };
@@ -21,20 +22,12 @@ type User = {
   weight: number;
   targetWeight: number;
   bmi: number;
-  weightRecords: weightRecord[];
-};
-
-const getBMICategory = (bmi: number) => {
-  if (bmi < 18.5) return 'Bajo peso';
-  if (bmi < 25) return 'Normal';
-  if (bmi < 30) return 'Sobrepeso';
-  if (bmi < 35) return 'Obesidad I';
-  if (bmi < 40) return 'Obesidad II';
-  return 'Obesidad III';
+  bmiCategory: string;
+  weightRecords: WeightRecord[];
 };
 
 const Progress: React.FC = () => {
-  const [weightRecords, setWeightRecords] = useState<weightRecord[]>([]);
+  const [weightRecords, setWeightRecords] = useState<WeightRecord[]>([]);
   const [user, setUser] = useState<User | null>(null);
   const [newWeight, setNewWeight] = useState('');
   const [showForm, setShowForm] = useState(false);
@@ -48,11 +41,13 @@ const Progress: React.FC = () => {
         const token = await AsyncStorage.getItem('userToken');
         if (!token) throw new Error('Token no encontrado');
 
-        const res = await axios.get(API_BASE_URL, {
-          headers: {
-            'x-auth-token': token,
-          },
-        });
+       const res = await axios.get(API_BASE_URL, {
+
+  headers: {
+    'x-auth-token': token,
+  },
+});
+
 
         setUser(res.data);
         setWeightRecords(res.data.weightRecords || []);
@@ -72,22 +67,18 @@ const Progress: React.FC = () => {
       return;
     }
 
-    const newRecord: weightRecord = {
-      date: new Date().toISOString().split('T')[0],
-      weight: weightValue,
-    };
-
     try {
       const token = await AsyncStorage.getItem('userToken');
       if (!token) throw new Error('Token no encontrado');
 
-      await axios.post(API_BASE_URL, newRecord, {
-        headers: {
-          'x-auth-token': token,
-        },
-      });
+      const res = await axios.post(
+        `${API_BASE_URL}/update-weight`,
+        { weight: weightValue },
+        { headers: { 'x-auth-token': token } }
+      );
 
-      setWeightRecords((prev) => [...prev, newRecord]);
+      setUser(res.data);
+      setWeightRecords(res.data.weightRecords);
       setNewWeight('');
       setShowForm(false);
       setError('');
@@ -102,7 +93,7 @@ const Progress: React.FC = () => {
   );
 
   const calculateProgress = () => {
-    if (!user || weightRecords.length === 0) return 0;
+    if (!user || sortedRecords.length === 0) return 0;
     const initial = sortedRecords[0].weight;
     const current = sortedRecords[sortedRecords.length - 1].weight;
     const goal = user.targetWeight;
@@ -198,12 +189,10 @@ const Progress: React.FC = () => {
       <View style={styles.card}>
         <Text style={styles.title}>Estadísticas</Text>
         <Text>Peso inicial: {sortedRecords[0]?.weight ?? user.weight} kg</Text>
-        <Text>Peso actual: {sortedRecords[sortedRecords.length - 1]?.weight ?? user.weight} kg</Text>
+        <Text>Peso actual: {user.weight} kg</Text>
         <Text>Objetivo de Peso: {user.targetWeight} kg</Text>
-        <Text>
-          IMC: {user.bmi} 
-        </Text>
-        <Text>Categroria: ({getBMICategory(user.bmi)})</Text>
+        <Text>IMC: {user.bmi.toFixed(1)}</Text>
+        <Text>Categoría: {user.bmiCategory}</Text>
       </View>
     </ScrollView>
   );
