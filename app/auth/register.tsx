@@ -54,7 +54,7 @@ const Register: React.FC = () => {
     };
 
     try {
-      await axios.post('http://192.168.1.95:5000/api/auth/register', data);
+      await axios.post('http://192.168.110.218:5000/api/auth/register', data);
       router.push('/(tabs)/dashboard');
     } catch (err: any) {
       setError(err.response?.data?.message || 'Error al registrar. Por favor intente de nuevo.');

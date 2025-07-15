@@ -53,7 +53,7 @@ const Profile: React.FC = () => {
         return;
       }
 
-      const response = await axios.get('http://192.168.1.95:5000/api/auth/user', {
+      const response = await axios.get('http://192.168.110.218:5000/api/auth/user', {
         headers: {
           'x-auth-token': token,
         },

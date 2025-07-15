@@ -12,6 +12,12 @@ export default StyleSheet.create({
     marginBottom: 16,
     color: '#1f2937',
   },
+  greeting: {
+    fontSize: 26,
+    fontWeight: 'bold',
+    color: '#0c9baf',
+    fontFamily: ' fantasy',
+  },
   card: {
     backgroundColor: '#fff',
     padding: 16,
@@ -33,7 +39,7 @@ export default StyleSheet.create({
     fontSize: 22,
     fontWeight: 'bold',
     marginTop: 4,
-    color: '#10b981',
+    color: '#000000',
   },
   barBackground: {
     height: 12,
@@ -100,11 +106,30 @@ export default StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#e5e7eb',
   },
-  iconContainer: {
+    iconContainer: {
+    width: 53, 
+    height: 53,
     alignItems: 'center',
     marginBottom: 24,
     backgroundColor: '#A0DFF7',
     padding: 16,
     borderRadius: 50,
+    alignSelf: 'flex-end'
+  },
+
+header1: {
+  flexDirection: 'row',        
+  alignItems: 'center',        
+  justifyContent: 'space-between', 
+  paddingHorizontal: 16,
+  marginTop: 20,
+},
+
+
+  grid: {
+    flexDirection: 'column',
+    gap: 16,
   },
 });
+
+

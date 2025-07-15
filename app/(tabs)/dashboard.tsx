@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
-import { BarChart } from 'react-native-chart-kit';
-import { Link, useRouter } from 'expo-router';
-import styles from '../styles/stylesP'; // Asegúrate de tener este archivo de estilos
+import { LineChart } from 'react-native-chart-kit';
+import { Link } from 'expo-router';
+import styles from '../styles/stylesP';
 
 type PesoRecord = {
   date: string;
@@ -76,21 +76,19 @@ const Dashboard: React.FC = () => {
       let calculatedProgress = 0;
 
       if (goalPeso < initialPeso) {
-        if (currentPeso <= goalPeso) {
-          calculatedProgress = 100;
-        } else if (currentPeso >= initialPeso) {
-          calculatedProgress = 0;
-        } else {
-          calculatedProgress = ((initialPeso - currentPeso) / (initialPeso - goalPeso)) * 100;
-        }
+        calculatedProgress =
+          currentPeso <= goalPeso
+            ? 100
+            : currentPeso >= initialPeso
+            ? 0
+            : ((initialPeso - currentPeso) / (initialPeso - goalPeso)) * 100;
       } else if (goalPeso > initialPeso) {
-        if (currentPeso >= goalPeso) {
-          calculatedProgress = 100;
-        } else if (currentPeso <= initialPeso) {
-          calculatedProgress = 0;
-        } else {
-          calculatedProgress = ((currentPeso - initialPeso) / (goalPeso - initialPeso)) * 100;
-        }
+        calculatedProgress =
+          currentPeso >= goalPeso
+            ? 100
+            : currentPeso <= initialPeso
+            ? 0
+            : ((currentPeso - initialPeso) / (goalPeso - initialPeso)) * 100;
       } else {
         calculatedProgress = 100;
       }
@@ -103,8 +101,8 @@ const Dashboard: React.FC = () => {
     calculateProgress();
   }, [calculateProgress]);
 
-  const todayPlan = dailyPlans.find(plan =>
-    plan.date === new Date().toISOString().split('T')[0]
+  const todayPlan = dailyPlans.find(
+    (plan) => plan.date === new Date().toISOString().split('T')[0]
   );
 
   const getWeightDifference = () => {
@@ -127,8 +125,8 @@ const Dashboard: React.FC = () => {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.header}>
+    <ScrollView contentContainerStyle={{ padding: 16 }}>
+      <View style={styles.header1}>
         <Text style={styles.greeting}>Hola, {user.fullName.split(' ')[0]}</Text>
         <View style={styles.iconContainer}>
           <Icon name="activity" size={24} color="#1E3A8A" />
@@ -141,8 +139,7 @@ const Dashboard: React.FC = () => {
         <Text style={styles.percent}>{progress.toFixed(1)}%</Text>
         <Text style={{ color: '#4B5563' }}>{getWeightDifference()}</Text>
 
-        {/* Histograma con react-native-chart-kit */}
-        <BarChart
+        <LineChart
           data={{
             labels: pesoRecords.map((p) => p.date.slice(5)),
             datasets: [{ data: pesoRecords.map((p) => p.peso) }],
@@ -150,7 +147,7 @@ const Dashboard: React.FC = () => {
           width={Dimensions.get('window').width - 32}
           height={220}
           yAxisSuffix="kg"
-          fromZero
+          yAxisInterval={1}
           chartConfig={{
             backgroundGradientFrom: '#f3f4f6',
             backgroundGradientTo: '#f3f4f6',
@@ -158,18 +155,24 @@ const Dashboard: React.FC = () => {
             color: (opacity = 1) => `rgba(21, 128, 61, ${opacity})`,
             labelColor: () => '#4B5563',
             style: { borderRadius: 8 },
+            propsForDots: {
+              r: '4',
+              strokeWidth: '2',
+              stroke: '#1E3A8A',
+            },
           }}
+          bezier
           style={{
             marginVertical: 16,
             borderRadius: 8,
           }}
         />
 
-        <TouchableOpacity style={styles.button} onPress={() => alert('Ir a detalles')}>
-          <Link href="/auth/prreso" asChild>
-          <Text style={styles.buttonText}>Ver detalles</Text>
-          </Link>
-        </TouchableOpacity>
+        <Link href="../progress" asChild>
+          <TouchableOpacity style={styles.button}>
+            <Text style={styles.buttonText}>Ver detalles</Text>
+          </TouchableOpacity>
+        </Link>
       </View>
 
       {/* Tarjetas Plan y Peso */}
@@ -184,16 +187,23 @@ const Dashboard: React.FC = () => {
               <Text>🍽 Cena: {todayPlan.meals.dinner.name}</Text>
               <Text style={{ fontWeight: '600', marginTop: 12 }}>Ejercicios</Text>
               {todayPlan.exercises.map((e) => (
-                <Text key={e.id}>🏃‍♀️ {e.name} ({e.duration} min)</Text>
+                <Text key={e.id}>
+                  🏃‍♀️ {e.name} ({e.duration} min)
+                </Text>
               ))}
-              <TouchableOpacity style={[styles.button, { marginTop: 10 }]} onPress={() => alert('Ir al plan')}>
-                <Text style={styles.buttonText}>Ver plan completo</Text>
-              </TouchableOpacity>
+              <Link href="../plan" asChild>
+          <TouchableOpacity style={styles.button}>
+            <Text style={styles.buttonText}>Ver plan completo</Text>
+          </TouchableOpacity>
+        </Link>
             </>
           ) : (
             <>
               <Text>No hay plan hoy</Text>
-              <TouchableOpacity style={[styles.button, { marginTop: 10 }]} onPress={() => alert('Generar plan')}>
+              <TouchableOpacity
+                style={[styles.button, { marginTop: 10 }]}
+                onPress={() => alert('Generar plan')}
+              >
                 <Text style={styles.buttonText}>Generar plan</Text>
               </TouchableOpacity>
             </>
@@ -202,7 +212,9 @@ const Dashboard: React.FC = () => {
 
         <View style={styles.card}>
           <Text style={styles.title}>Registro de peso</Text>
-          <Text>Peso actual: {pesoRecords[pesoRecords.length - 1]?.peso ?? user.peso} kg</Text>
+          <Text>
+            Peso actual: {pesoRecords[pesoRecords.length - 1]?.peso ?? user.peso} kg
+          </Text>
           <TouchableOpacity
             style={[styles.button, { marginTop: 12 }]}
             onPress={() => alert('Registrar nuevo peso')}
@@ -216,3 +228,4 @@ const Dashboard: React.FC = () => {
 };
 
 export default Dashboard;
+  

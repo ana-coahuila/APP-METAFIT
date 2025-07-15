@@ -18,6 +18,7 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 3,
     padding: 24,
+    backgroundImage:'',
   },
   iconContainer: {
     alignItems: 'center',

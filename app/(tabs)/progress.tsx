@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react'; //PRIN 
 import {
   View,
   Text,
@@ -33,7 +33,7 @@ const Progress: React.FC = () => {
   const [showForm, setShowForm] = useState(false);
   const [error, setError] = useState('');
 
-  const API_BASE_URL = 'http://192.168.1.95:5000/api/auth/user';
+  const API_BASE_URL = 'http://192.168.110.218:5000/api/auth/user';
 
   useEffect(() => {
     const fetchData = async () => {

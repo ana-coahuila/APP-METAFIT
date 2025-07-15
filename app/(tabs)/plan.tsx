@@ -56,9 +56,9 @@ const Plan: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const plansResponse = await axios.get('http://192.168.1.95:5000/api/plans');
-        const mealsResponse = await axios.get('http://192.168.1.95:5000/api/meals');
-        const exercisesResponse = await axios.get('http://192.168.1.95:5000/api/exercises');
+        const plansResponse = await axios.get('http://192.168.110.218:5000/api/plans');
+        const mealsResponse = await axios.get('http://192.168.110.218:5000/api/meals');
+        const exercisesResponse = await axios.get('http://192.168.110.218:5000/api/exercises');
 
         setDailyPlans(plansResponse.data);
         setRecommendedMeals(mealsResponse.data);
